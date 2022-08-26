@@ -1,17 +1,18 @@
-name: Hello from AWS
+name: Upload Airflow DAGs to S3
 on:
   push:
 permissions:
   id-token: write
+  contents: read
 jobs:
   greeting:
     runs-on: ubuntu-latest
     steps:
+    - uses: actions/checkout@v2
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
         aws-region: us-east-1
         role-to-assume: arn:aws:iam::724122322268:role/github-actions-upload-s3
-
     - name: Print AWS S3
-      run: aws s3 ls
+      run: aws s3 sync . s3://github-actions-demo1
