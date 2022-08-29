@@ -27,6 +27,6 @@ jobs:
       uses: aws-actions/configure-aws-credentials@v1
       with:
         aws-region: us-east-1
-        role-to-assume: arn:aws:iam::724122322268:role/github-actions-upload-s3
+        role-to-assume: ${{ secrets[env.ROLE_TO_ASSUME] }}
     - name: Deploy to AWS S3
       run: aws s3 sync . s3://github-actions-demo1
