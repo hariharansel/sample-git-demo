@@ -3,7 +3,7 @@ name: Upload OPS Airflow DAGs to S3
 # Controls when the workflow will run
 on:
   push:
-    branches: [ "main", "develop" ]
+    branches: [ "master", "develop" ]
     # Sequence of patterns matched against refs/tags
     tags:
       - v2.*
@@ -27,10 +27,10 @@ jobs:
     
     - name: Step 2 - Set Environments Variables
       run: |
-        if [[ "${{github.ref}}" == "refs/heads/main" ] && [ ${{ github.event.ref }} =~ ^refs/tags/v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+        if [[ "${{github.ref}}" == "refs/heads/master" ] && [ ${{ github.event.ref }} =~ ^refs/tags/v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
           echo "ROLE_TO_ASSUME=ROLE_TO_ASSUME_PROD_VAR" >> $GITHUB_ENV
           echo "BUCKET_NAME=ops-airflow-artifacts-prod" >> $GITHUB_ENV
-        elif [[ "${{github.ref}}" == "refs/heads/main" ]]; then
+        elif [[ "${{github.ref}}" == "refs/heads/master" ]]; then
           echo "ROLE_TO_ASSUME=ROLE_TO_ASSUME_PREPROD_VAR" >> $GITHUB_ENV
           echo "BUCKET_NAME=ops-airflow-artifacts-preprod" >> $GITHUB_ENV
         else
