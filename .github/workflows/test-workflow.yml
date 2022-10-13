@@ -1,30 +1,51 @@
-name: Upload OPS Airflow Artifacts to S3
-# on action to branches to trigger this workflow 
+name: Upload OPS Airflow DAGs to S3
+
+# Controls when the workflow will run
 on:
   push:
-    branches: [develop, main]
+    branches: [ "main", "develop" ]
+    # Sequence of patterns matched against refs/tags
+    tags:
+      - v2.*
+      - v1.*
+env:
+  AWS_REGION : "eu-west-1"
+
 permissions:
   id-token: write
   contents: read
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   deploy:
     runs-on: ubuntu-latest
     timeout-minutes: 2
     steps:
+    
     - name: Step 1 - Checkout
       uses: actions/checkout@v2
+    
     - name: Step 2 - Set Environments Variables
       run: |
-        if [[ "${{github.ref}}" == "refs/heads/develop" ]]; then
-          echo "ROLE_TO_ASSUME=ROLE_TO_ASSUME_DEV_VAR" >> $GITHUB_ENV
-        fi
-        if [[ "${{github.ref}}" == "refs/heads/main" ]]; then
+        if [[ "${{github.ref}}" == "refs/heads/main" ] && [ ${{ github.event.ref }} =~ ^refs/tags/v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+          echo "ROLE_TO_ASSUME=ROLE_TO_ASSUME_PROD_VAR" >> $GITHUB_ENV
+          echo "BUCKET_NAME=ops-airflow-artifacts-prod" >> $GITHUB_ENV
+        elif [[ "${{github.ref}}" == "refs/heads/main" ]]; then
           echo "ROLE_TO_ASSUME=ROLE_TO_ASSUME_PREPROD_VAR" >> $GITHUB_ENV
+          echo "BUCKET_NAME=ops-airflow-artifacts-preprod" >> $GITHUB_ENV
+        else
+          echo "ROLE_TO_ASSUME=ROLE_TO_ASSUME_DEV_VAR" >> $GITHUB_ENV
+          echo "BUCKET_NAME=ops-airflow-artifacts-dev" >> $GITHUB_ENV
         fi
+    
     - name: Step 3 - Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
-        aws-region: ${{ secrets[env.AWS_REGION] }}
+        role-session-name: github-action-session
+        aws-region: ${{ env.AWS_REGION }}
         role-to-assume: ${{ secrets[env.ROLE_TO_ASSUME] }}
-    - name: Step 4 - Deploy to AWS S3
-      run: aws s3 sync . s3://github-actions-demo1
+  
+    - name: Step 4 - Publish artifacts to AWS S3
+      run: |
+        aws s3 rm s3://${{ env.BUCKET_NAME }}/dags --recursive
+        aws s3 sync . s3://${{ env.BUCKET_NAME }}/dags --exclude '.git*' --exclude 'test'
