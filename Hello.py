@@ -1,1 +1,1 @@
-print("Hello World Dev")
+print("Hello World Release")
