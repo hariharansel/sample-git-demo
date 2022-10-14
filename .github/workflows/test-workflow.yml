@@ -17,7 +17,7 @@ jobs:
       uses: actions/checkout@v2
     - name: Step 2 - Set Environments Variables
       run: |
-        if [[ startsWith(github.ref, 'refs/tags/v') ]]; then
+        if [[ ${{ github.event.ref }} =~ ^refs/tags/v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
           echo "Hello ${{github.event.ref}} - I"
           echo "ROLE_TO_ASSUME=ROLE_TO_ASSUME_PROD_VAR" >> $GITHUB_ENV
           echo "BUCKET_NAME=ops-airflow-artifacts-prod" >> $GITHUB_ENV
