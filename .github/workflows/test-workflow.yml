@@ -23,11 +23,11 @@ jobs:
           echo "ROLE_TO_ASSUME=ROLE_TO_ASSUME_PROD_VAR" >> $GITHUB_ENV
           echo "BUCKET_NAME=ops-airflow-artifacts-prod" >> $GITHUB_ENV
         elif [[ "${{github.ref}}" == "refs/heads/master" ]]; then
-          echo "Hello ${{github.event.ref}}"
+          echo "Hello ${{github.event.ref}} - II"
           echo "ROLE_TO_ASSUME=ROLE_TO_ASSUME_PREPROD_VAR" >> $GITHUB_ENV
           echo "BUCKET_NAME=ops-airflow-artifacts-preprod" >> $GITHUB_ENV
         else
-          echo "Hello ${{github.event.ref}}"
+          echo "Hello ${{github.event.ref}} - III"
           echo "ROLE_TO_ASSUME=ROLE_TO_ASSUME_DEV_VAR" >> $GITHUB_ENV
           echo "BUCKET_NAME=ops-airflow-artifacts-dev" >> $GITHUB_ENV
         fi
