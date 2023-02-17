@@ -2,7 +2,7 @@ name: Upload OPS Airflow Artifacts to S3
 # on action to branches to trigger this workflow 
 on:
   push:
-    branches: [develop, master]
+    branches: [release]
     tags:
       - ODH-v[0-9]+\.[0-9]+\.[0-9]+
 permissions:
