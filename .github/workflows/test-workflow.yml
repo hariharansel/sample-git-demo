@@ -18,7 +18,7 @@ jobs:
     - name: Step 2 - Set Environments Variables
       run: |
         if [[ ( ${{ github.event.ref }} =~ ^refs/tags/ODH-v[0-9]+\.[0-9]+\.[0-9]+\.*[a-zA-Z0-9]*$ ) ]]; then
-          echo "Hello ${{github.event.ref}} - I"
+          echo "Hello ${{github.event.ref}} -   I"
           echo "ROLE_TO_ASSUME=ROLE_TO_ASSUME_PROD_VAR" >> $GITHUB_ENV
           echo "BUCKET_NAME=ops-airflow-artifacts-prod" >> $GITHUB_ENV
         elif [[ "${{github.ref}}" == "refs/heads/master" ]]; then
